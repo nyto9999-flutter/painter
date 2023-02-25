@@ -1,71 +1,85 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paint/logger.dart';
+import 'package:paint/user.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+part 'main.g.dart';
+
+//provider
+final prefsPod = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError();
+});
+
+//notifier
+@riverpod
+class UserRepo extends _$UserRepo {
+  String key = 'key';
+
+  @override
+  String build() {
+    //local storage here...
+    return ref.read(prefsPod).getString(key) ?? 'from repo';
+  }
+
+  Future<void> add(User user) async {
+    await ref.read(prefsPod).setString(key, user.name);
+    state = user.name;
+  }
 }
 
-class MyApp extends StatelessWidget {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(ProviderScope(
+    observers: [Logger()],
+    overrides: [prefsPod.overrideWithValue(prefs)],
+    child: const MyApp(),
+  ));
+}
+
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final username = ref.watch(userRepoProvider);
+    final controller = TextEditingController();
+
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Riverpod Annotation Example'),
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Text(username),
+              TextField(
+                controller: controller,
+                decoration: const InputDecoration(hintText: 'Enter your name'),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  ref
+                      .read(userRepoProvider.notifier)
+                      .add(User(controller.text));
+                },
+                icon: const Icon(CupertinoIcons.add),
+                label: const Text('Add'),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(CupertinoIcons.clear),
+                label: const Text('Clear'),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
-//
