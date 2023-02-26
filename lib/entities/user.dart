@@ -7,7 +7,7 @@ part 'user.g.dart';
 @freezed
 class User with _$User {
   @Assert('name != ""', 'Name cannot be empty')
-  const factory User(String name) = _User;
+  const factory User(String name, String token) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

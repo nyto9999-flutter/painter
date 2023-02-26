@@ -11,8 +11,8 @@ class Paint extends ConsumerStatefulWidget {
 class _PaintState extends ConsumerState<Paint> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: const Text('paint'),
+    return const Center(
+      child: Text('paint'),
     );
   }
 }

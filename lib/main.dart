@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paint/entities/user.dart';
 import 'package:paint/logger.dart';
-import 'package:paint/user.dart';
+import 'package:paint/router/router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,44 +42,32 @@ Future<void> main() async {
 }
 
 class MyApp extends ConsumerWidget {
+  static const path = '/my-app';
+
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final username = ref.watch(userRepoProvider);
-    final controller = TextEditingController();
+    final router = ref.watch(routerProvider);
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Riverpod Annotation Example'),
-        ),
-        body: Center(
-          child: Column(
-            children: [
-              Text(username),
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(hintText: 'Enter your name'),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  ref
-                      .read(userRepoProvider.notifier)
-                      .add(User(controller.text));
-                },
-                icon: const Icon(CupertinoIcons.add),
-                label: const Text('Add'),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(CupertinoIcons.clear),
-                label: const Text('Clear'),
-              ),
-            ],
-          ),
-        ),
+    return MaterialApp.router(
+      routerConfig: router,
+      title: 'flutter_riverpod + go_router Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+    );
+  }
+}
+
+class SplashPage extends StatelessWidget {
+  const SplashPage({super.key});
+  static const path = '/splash';
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text("Splash Page")),
     );
   }
 }
