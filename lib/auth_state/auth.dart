@@ -51,7 +51,7 @@ class AuthNotifier extends AutoDisposeAsyncNotifier<User?> {
 
   /// Mock of a successful login attempt, which results come from the network.
   Future<void> login(String email, String password) async {
-    state = await AsyncValue.guard<User>(() {
+    state = await AsyncValue.guard<User?>(() {
       return Future.delayed(
         networkRoundTripTime,
         () => _dummyUser,

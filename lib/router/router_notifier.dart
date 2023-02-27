@@ -6,7 +6,6 @@ import 'package:paint/login_page.dart';
 import 'package:paint/main.dart';
 import 'package:paint/page_a.dart';
 import 'package:paint/page_b.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../auth_state/auth.dart';
 import '../auth_state/permission.dart';
@@ -46,8 +45,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
   }
 
   /// Redirects the user when our authentication changes
-  Future<String?> redirect(context, GoRouterState state) async {
-    assert(context != null);
+  String? redirect(BuildContext context, GoRouterState state) {
     if (this.state.isLoading || this.state.hasError) return null;
 
     final isSplash = state.location == SplashPage.path;

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class PageB extends ConsumerWidget {
-  static const path = '/page-b';
+  static const path = 'page-b';
 
   const PageB({super.key});
 
